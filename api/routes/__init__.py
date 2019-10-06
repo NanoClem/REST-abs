@@ -59,8 +59,8 @@ def getDataByID(id):
 #-------------------------------------------------------
 
 # UPDATE A DATA COLLECTION
-@app.route("/deal", methods=['PUT'])
-def updateData():
+@app.route("/deal/<int:id>", methods=['PUT'])
+def updateData(id):
     """Update a data collection"""
     if request.method == "PUT" :
         return '', 204
