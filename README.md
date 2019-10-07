@@ -9,7 +9,6 @@ A python REST API to manage data from the [dealabs web scrap project](https://gi
 }
 ```
 
-
 # CRUD operations
 
 ## GET
