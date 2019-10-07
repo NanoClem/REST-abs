@@ -1,6 +1,6 @@
 # REST-abs
-A python REST API to manage data from the dealabs web scrap project
-[See the project here](https://github.com/NanoClem/dealsScraping/settings)
+A python REST API to manage data from the dealabs web scrap project  
+[See the repository here](https://github.com/NanoClem/dealsScraping/settings)
 
 # Response pattern
 ```json
