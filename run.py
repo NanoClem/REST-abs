@@ -39,6 +39,17 @@ class DealModel(object):
         self.deals.append(deal)
         return deal
 
+    def update(self, id, data):
+        """Update a data collection"""
+        deal = self.get(id)
+        deal.update(data)
+        return deal
+
+    def delete(self, id):
+        """Delete a data collection"""
+        deal = self.get(id)
+        self.deals.remove(deal)
+
 
 DAO = DealModel()
 DAO.create({"url" : "https://www.dealabs.com/bons-plans/tv-led-4k-uhd-55-pouces-continental-edison-smart-tv-1714763"})
@@ -90,14 +101,14 @@ class Data(Resource):
         """Return data about a deal"""
         return DAO.get(id), 200
 
-
     @api.marshal_with(deal)
     def put(self, id):
         """Update a data collection"""
-        return '', 204
+        return DAO.update(id, api.payload), 204
 
     def delete(self, id):
         """Delete a data collection"""
+        DAO.delete(id)
         return '', 204
 
 
