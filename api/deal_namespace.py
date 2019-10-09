@@ -1,29 +1,29 @@
-import markdown
-from flask import Flask
-from flask_restplus import Resource, Api, fields
+from flask_restplus import Namespace, Resource, fields
 
-
-# Instance of Flask
-app = Flask(__name__)
-api = Api(app)
+# api var and Metadata about the namespace
+api = Namespace('deal', description = 'Deals related operations')
 
 
 
 #=============================================================
 #   MODEL
 #=============================================================
+
+# TEMPLATE
 deal = api.model('Deal', {
     "id"  : fields.Integer(readonly=True, description="The deal unique identifier"),
     "url" : fields.String(required=True, description="The deal url")
     })
 
+
+# DAO class Object
 class DealModel(object):
     """
     """
     def __init__(self):
         """ """
-        self.deals = []
-        self.cpt   = 0
+        self.deals = []   ## TEMP: temporary database for tests
+        self.cpt   = 0    ## TEMP: temporary way to give id
 
     def get(self, id):
         """Return data from a deal"""
@@ -51,8 +51,9 @@ class DealModel(object):
         self.deals.remove(deal)
 
 
+# DAO object
 DAO = DealModel()
-DAO.create({"url" : "https://www.dealabs.com/bons-plans/tv-led-4k-uhd-55-pouces-continental-edison-smart-tv-1714763"})
+
 
 
 #=============================================================
@@ -60,29 +61,20 @@ DAO.create({"url" : "https://www.dealabs.com/bons-plans/tv-led-4k-uhd-55-pouces-
 #=============================================================
 
 #---------------------------------------------
-#   INDEX
-#---------------------------------------------
-@api.route("/api")
-class Index(Resource):
-    def get(self):
-        """Showing the API doc file"""
-        with open("README.md", "r") as doc_file :
-            content = doc_file.read()
-            return markdown.markdown(content)
-
-#---------------------------------------------
 #   DATA LIST
 #---------------------------------------------
-@api.route("/api/deals")
+@api.route("/", strict_slashes = False)     # strict_slashes setted to False so the debuger ignores it
 class DataList(Resource):
     """
     Getting a list of all stored data
     """
+    @api.doc('list_deals')
     @api.marshal_list_with(deal)
     def get(self):
         """Return a list of deals"""
         return DAO.deals, 200
 
+    @api.doc('create_deal')
     @api.expect(deal)
     @api.marshal_with(deal, code=201)
     def post(self):
@@ -92,26 +84,27 @@ class DataList(Resource):
 #---------------------------------------------
 #   CRUD
 #---------------------------------------------
-@api.route("/api/deal/<int:id>")
+@api.route("/<int:id>")
+@api.response(404, 'Deal not found')
+@api.param('id', 'The deal unique identifier')
 class Data(Resource):
     """
     """
+    @api.doc('get_deal')
     @api.marshal_with(deal)
     def get(self, id):
         """Return data about a deal"""
         return DAO.get(id), 200
 
+    @api.doc('update_deal')
     @api.marshal_with(deal)
     def put(self, id):
         """Update a data collection"""
         return DAO.update(id, api.payload), 204
 
+    @api.doc('delete_deal')
+    @api.response(204, 'Deal deleted')
     def delete(self, id):
         """Delete a data collection"""
         DAO.delete(id)
         return '', 204
-
-
-
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="3000", debug=True)
