@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 
 # api var and Metadata about the namespace
-api = Namespace('deal', description = 'Deals related operations')
+api = Namespace('api/deal', description = 'Deals related operations')
 
 
 
