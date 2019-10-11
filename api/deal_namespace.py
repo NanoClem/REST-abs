@@ -30,7 +30,7 @@ class DealModel(object):
         for deal in self.deals:
             if deal['id'] == id:
                 return deal
-        api.abort(404, "Deal {} doesn't exist".format(id))
+        api.abort(404, "Deal {} doesn't exist".format(id), data={})
 
     def create(self, data):
         """Create a new data collection"""
