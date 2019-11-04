@@ -1,7 +1,8 @@
 from flask_restplus import Namespace, Resource, fields
+from datetime import datetime
 
-# api var and Metadata about the namespace
-api = Namespace('api/deal', description = 'Deals related operations')
+# ns var and Metadata about the namespace
+ns = Namespace('api/deals', description = 'Deals related operations')
 
 
 
@@ -10,9 +11,10 @@ api = Namespace('api/deal', description = 'Deals related operations')
 #=============================================================
 
 # TEMPLATE
-deal = api.model('Deal', {
+deal = ns.model('Deal', {
     "id"  : fields.Integer(readonly=True, description="The deal unique identifier"),
-    "url" : fields.String(required=True, description="The deal url")
+    "url" : fields.String(required=True, description="The deal url"),
+    "date" : datetime.now()
     })
 
 
@@ -32,7 +34,7 @@ class DealModel(object):
         for deal in self.deals:
             if deal['id'] == id:
                 return deal
-        api.abort(404, "Deal {} doesn't exist".format(id), data={})
+        ns.abort(404, "Deal {} doesn't exist".format(id), data={})
 
 
     def create(self, data):
@@ -71,51 +73,51 @@ DAO = DealModel()
 #---------------------------------------------
 #   DATA LIST
 #---------------------------------------------
-@api.route("/", strict_slashes = False)     # strict_slashes setted to False so the debuger ignores it
+@ns.route("/", strict_slashes = False)     # strict_slashes setted to False so the debuger ignores it
 class DataList(Resource):
     """
     Get a list of all stored data and allows POST to add new datasets
     """
 
-    @api.doc('list_deals')
-    @api.marshal_list_with(deal)
+    @ns.doc('list_deals')
+    @ns.marshal_list_with(deal)
     def get(self):
         """Return a list of deals"""
         return DAO.deals, 200
 
-    @api.doc('create_deal')
-    @api.expect(deal)
-    @api.marshal_with(deal, code=201)
+    @ns.doc('create_deal')
+    @ns.expect(deal)
+    @ns.marshal_with(deal, code=201)
     def post(self):
         """Create a new deal"""
-        return DAO.create(api.payload), 201
+        return DAO.create(ns.payload), 201
 
 
 #---------------------------------------------
 #   CRUD
 #---------------------------------------------
-@api.route("/<int:id>")
-@api.response(404, 'Deal not found')
-@api.param('id', 'The deal unique identifier')
+@ns.route("/<int:id>")
+@ns.response(404, 'Deal not found')
+@ns.param('id', 'The deal unique identifier')
 class Data(Resource):
     """
     Show a single data item, update one, or delete one
     """
 
-    @api.doc('get_deal')
-    @api.marshal_with(deal)
+    @ns.doc('get_deal')
+    @ns.marshal_with(deal)
     def get(self, id):
         """Return data about a deal"""
         return DAO.get(id), 200
 
-    @api.doc('update_deal')
-    @api.marshal_with(deal)
+    @ns.doc('update_deal')
+    @ns.marshal_with(deal)
     def put(self, id):
         """Update a data collection"""
-        return DAO.update(id, api.payload), 204
+        return DAO.update(id, ns.payload), 204
 
-    @api.doc('delete_deal')
-    @api.response(204, 'Deal deleted')
+    @ns.doc('delete_deal')
+    @ns.response(204, 'Deal deleted')
     def delete(self, id):
         """Delete a data collection"""
         DAO.delete(id)

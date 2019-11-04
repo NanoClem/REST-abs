@@ -1,5 +1,5 @@
 from flask_restplus import Api
-from .deal_namespace import api as dealNS
+from .deal_namespace import ns as dealNS
 
 
 # API constructor
