@@ -12,9 +12,9 @@ ns = Namespace('api/deals', description = 'Deals related operations')
 
 # TEMPLATE
 deal = ns.model('Deal', {
-    "id"  : fields.Integer(readonly=True, description="The deal unique identifier"),
-    "url" : fields.String(required=True, description="The deal url"),
-    "date" : datetime.now()
+    "id"         : fields.Integer(readonly=True, description="The deal unique identifier"),
+    "url"        : fields.String(required=True, description="The deal url"),
+    "created at" : fields.String(required=True, description="Date of creation")
     })
 
 
@@ -41,7 +41,8 @@ class DealModel(object):
         """Create a new data collection"""
         try:
             deal = data
-            deal['id'] = self.cpt = self.cpt + 1
+            deal['id'] = self.cpt = self.cpt + 1    # auto increment id
+            deal['created_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             self.deals.append(deal)
         except TypeError as e:
             print("Error {}".format(e))
@@ -82,7 +83,7 @@ class DataList(Resource):
     @ns.doc('list_deals')
     @ns.marshal_list_with(deal)
     def get(self):
-        """Return a list of deals"""
+        """Return a list of all deals"""
         return DAO.deals, 200
 
     @ns.doc('create_deal')
@@ -107,7 +108,7 @@ class Data(Resource):
     @ns.doc('get_deal')
     @ns.marshal_with(deal)
     def get(self, id):
-        """Return data about a deal"""
+        """Return a single data collection"""
         return DAO.get(id), 200
 
     @ns.doc('update_deal')
