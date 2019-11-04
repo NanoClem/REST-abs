@@ -20,10 +20,12 @@ deal = api.model('Deal', {
 class DealModel(object):
     """
     """
+
     def __init__(self):
         """ """
         self.deals = []   ## TEMP: temporary database for tests
         self.cpt   = 0    ## TEMP: temporary way to give id
+
 
     def get(self, id):
         """Return data from a deal"""
@@ -32,18 +34,24 @@ class DealModel(object):
                 return deal
         api.abort(404, "Deal {} doesn't exist".format(id), data={})
 
+
     def create(self, data):
         """Create a new data collection"""
-        deal = data
-        deal['id'] = self.cpt = self.cpt + 1
-        self.deals.append(deal)
+        try:
+            deal = data
+            deal['id'] = self.cpt = self.cpt + 1
+            self.deals.append(deal)
+        except TypeError as e:
+            print("Error {}".format(e))
         return deal
+
 
     def update(self, id, data):
         """Update a data collection"""
         deal = self.get(id)
         deal.update(data)
         return deal
+
 
     def delete(self, id):
         """Delete a data collection"""
@@ -66,8 +74,9 @@ DAO = DealModel()
 @api.route("/", strict_slashes = False)     # strict_slashes setted to False so the debuger ignores it
 class DataList(Resource):
     """
-    Getting a list of all stored data
+    Get a list of all stored data and allows POST to add new datasets
     """
+
     @api.doc('list_deals')
     @api.marshal_list_with(deal)
     def get(self):
@@ -81,6 +90,7 @@ class DataList(Resource):
         """Create a new deal"""
         return DAO.create(api.payload), 201
 
+
 #---------------------------------------------
 #   CRUD
 #---------------------------------------------
@@ -89,7 +99,9 @@ class DataList(Resource):
 @api.param('id', 'The deal unique identifier')
 class Data(Resource):
     """
+    Show a single data item, update one, or delete one
     """
+
     @api.doc('get_deal')
     @api.marshal_with(deal)
     def get(self, id):
