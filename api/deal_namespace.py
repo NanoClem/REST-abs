@@ -11,7 +11,7 @@ ns = Namespace('api/deals', description = 'Deals related operations')
 #=============================================================
 
 # TEMPLATE
-deal = ns.model('Deal', {
+deal_model = ns.model('Deal', {
     "id"         : fields.Integer(readonly=True, description="The deal unique identifier"),
     "url"        : fields.String(required=True, description="The deal url"),
     "created at" : fields.String(required=True, description="Date of creation")
@@ -24,13 +24,17 @@ class DealModel(object):
     """
 
     def __init__(self):
-        """ """
+        """
+        CONSTRUCTOR
+        """
         self.deals = []   ## TEMP: temporary database for tests
         self.cpt   = 0    ## TEMP: temporary way to give id
 
 
     def get(self, id):
-        """Return data from a deal"""
+        """
+        Return data from a deal
+        """
         for deal in self.deals:
             if deal['id'] == id:
                 return deal
@@ -38,7 +42,9 @@ class DealModel(object):
 
 
     def create(self, data):
-        """Create a new data collection"""
+        """
+        Create a new data collection
+        """
         try:
             deal = data
             deal['id'] = self.cpt = self.cpt + 1    # auto increment id
@@ -50,14 +56,18 @@ class DealModel(object):
 
 
     def update(self, id, data):
-        """Update a data collection"""
+        """
+        Update a data collection
+        """
         deal = self.get(id)
         deal.update(data)
         return deal
 
 
     def delete(self, id):
-        """Delete a data collection"""
+        """
+        Delete a data collection
+        """
         deal = self.get(id)
         self.deals.remove(deal)
 
@@ -81,16 +91,21 @@ class DataList(Resource):
     """
 
     @ns.doc('list_deals')
-    @ns.marshal_list_with(deal)
+    @ns.marshal_list_with(deal_model)
     def get(self):
-        """Return a list of all deals"""
+        """
+        Return a list of all deals
+        """
         return DAO.deals, 200
 
+
     @ns.doc('create_deal')
-    @ns.expect(deal)
-    @ns.marshal_with(deal, code=201)
+    @ns.expect(deal_model)
+    @ns.marshal_with(deal_model, code=201)
     def post(self):
-        """Create a new deal"""
+        """
+        Create a new deal
+        """
         return DAO.create(ns.payload), 201
 
 
@@ -106,20 +121,28 @@ class Data(Resource):
     """
 
     @ns.doc('get_deal')
-    @ns.marshal_with(deal)
+    @ns.marshal_with(deal_model)
     def get(self, id):
-        """Return a single data collection"""
+        """
+        Return a single data collection
+        """
         return DAO.get(id), 200
 
+
     @ns.doc('update_deal')
-    @ns.marshal_with(deal)
+    @ns.marshal_with(deal_model)
     def put(self, id):
-        """Update a data collection"""
+        """
+        Update a data collection
+        """
         return DAO.update(id, ns.payload), 204
+
 
     @ns.doc('delete_deal')
     @ns.response(204, 'Deal deleted')
     def delete(self, id):
-        """Delete a data collection"""
+        """
+        Delete a data collection
+        """
         DAO.delete(id)
         return '', 204
