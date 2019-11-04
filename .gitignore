@@ -1,0 +1,6 @@
+# virtualenv python
+venv/
+
+# IDE
+.vscode/
+.idea/
