@@ -14,7 +14,7 @@ ns = Namespace('api/deals', description = 'Deals related operations')
 deal = ns.model('Deal', {
     "id"         : fields.Integer(readonly=True, description="The deal unique identifier"),
     "url"        : fields.String(required=True, description="The deal url"),
-    "created at" : fields.String(required=True, description="Date of creation")
+    "created_at" : fields.String(required=True, description="Date of creation")
     })
 
 
