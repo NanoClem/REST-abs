@@ -1,6 +1,6 @@
 from flask_restplus import Api
 from .deal_namespace import ns as dealNS
-from .mongo_init import mongo
+
 
 
 # API constructor
@@ -10,8 +10,10 @@ api = Api(
     version = 1.0
 )
 
-# Add namespace
-api.add_namespace(dealNS)
-
-# report our mongo instance
-mongo = mongo
+# REGISTER
+def register_api(app):
+    """
+    Add namespaces and register api for app
+    """
+    api.add_namespace(dealNS)
+    api.init_app(app)

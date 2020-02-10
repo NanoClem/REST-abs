@@ -1,5 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from datetime import datetime
+from init.setup import db
 
 # ns var and Metadata about the namespace
 ns = Namespace('api/deals', description = 'Deals related operations')
@@ -22,54 +23,43 @@ deal_model = ns.model('Deal', {
 class DealModel(object):
     """
     """
-
-    def __init__(self):
+    def getAll(self):
         """
-        CONSTRUCTOR
+        Return all data collections
         """
-        self.deals = []   ## TEMP: temporary database for tests
-        self.cpt   = 0    ## TEMP: temporary way to give id
+        return db.find()
 
 
     def get(self, id):
         """
         Return data from a deal
         """
-        for deal in self.deals:
-            if deal['id'] == id:
-                return deal
-        ns.abort(404, "Deal {} doesn't exist".format(id), data={})
+        data = db.deals.find_one({'id': id})
+        return data
 
 
     def create(self, data):
         """
         Create a new data collection
         """
-        try:
-            deal = data
-            deal['id'] = self.cpt = self.cpt + 1    # auto increment id
-            deal['created_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            self.deals.append(deal)
-        except TypeError as e:
-            print("Error {}".format(e))
-        return deal
+        data['created_at'] = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+        db.insert_one(data)
+        return data
 
 
     def update(self, id, data):
         """
         Update a data collection
         """
-        deal = self.get(id)
-        deal.update(data)
-        return deal
+        db.update_one({'id': id}, data)
+        return data
 
 
     def delete(self, id):
         """
         Delete a data collection
         """
-        deal = self.get(id)
-        self.deals.remove(deal)
+        db.delete_one({'id': id})
 
 
 # DAO object
@@ -96,7 +86,7 @@ class DataList(Resource):
         """
         Return a list of all deals
         """
-        return DAO.deals, 200
+        return DAO.getAll(), 200
 
 
     @ns.doc('create_deal')
