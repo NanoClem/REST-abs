@@ -1,15 +1,16 @@
 from flask import Flask
 from api import api
+import settings as stg
 
 
 if __name__ == '__main__':
 
-    # configs
-    host = "0.0.0.0"
-    port = "3000"
+    # SETTINGS
+    host = stg.HOST
+    port = stg.PORT
 
-    # Init app
+    # INIT APP
     app = Flask(__name__)
     api.init_app(app)
 
-    app.run(host=host, port=port, debug=True)
+    app.run(host=host, port=port, debug=stg.DEBUG)

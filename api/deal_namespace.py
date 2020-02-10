@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 from datetime import datetime
 
-# ns var and Metadata about the namespace
+# namespace and its metadata
 ns = Namespace('api/deals', description = 'Deals related operations')
 
 
@@ -10,7 +10,6 @@ ns = Namespace('api/deals', description = 'Deals related operations')
 #   MODEL
 #=============================================================
 
-# TEMPLATE
 deal = ns.model('Deal', {
     "id"         : fields.Integer(readonly=True, description="The deal unique identifier"),
     "url"        : fields.String(required=True, description="The deal url"),
@@ -18,7 +17,11 @@ deal = ns.model('Deal', {
     })
 
 
-# DAO class Object
+
+#=============================================================
+#   DAO
+#=============================================================
+
 class DealModel(object):
     """
     """
